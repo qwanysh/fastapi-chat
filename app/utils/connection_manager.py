@@ -1,19 +1,20 @@
-from typing import List
+from typing import Dict, List
 
 from fastapi import WebSocket
 
 
 class ConnectionManager:
     def __init__(self):
-        self.active_connections: List[WebSocket] = []
+        self.connections: Dict[str, List[WebSocket]] = {}
 
-    async def connect(self, websocket: WebSocket):
+    async def connect(self, chat_id: str, websocket: WebSocket):
         await websocket.accept()
-        self.active_connections.append(websocket)
+        self.connections[chat_id] = self.connections.get(chat_id, [])
+        self.connections[chat_id].append(websocket)
 
-    def disconnect(self, websocket: WebSocket):
-        self.active_connections.remove(websocket)
+    def disconnect(self, chat_id: str, websocket: WebSocket):
+        self.connections[chat_id].remove(websocket)
 
-    async def broadcast(self, data):
-        for connection in self.active_connections:
+    async def broadcast(self, chat_id: str, data):
+        for connection in self.connections[chat_id]:
             await connection.send_json(data)

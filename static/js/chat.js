@@ -1,11 +1,18 @@
 (function () {
   const form = document.getElementById('form');
   const container = document.getElementById('messages');
+  const chatId = form.dataset.chatId;
+  const ws = new WebSocket(getWebsocketUrl(chatId));
 
-  const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  const ws = new WebSocket(`${protocol}://${location.host}/messages/`);
+  form.addEventListener('submit', sendMessage);
+  ws.onmessage = renderMessage;
 
-  const sendMessage = function (event) {
+  function getWebsocketUrl(chatId) {
+    const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+    return `${protocol}://${location.host}/messages/${chatId}`;
+  }
+
+  function sendMessage(event) {
     event.preventDefault();
 
     const formData = new FormData(this);
@@ -13,9 +20,9 @@
 
     this.reset();
     ws.send(message);
-  };
+  }
 
-  const renderMessage = function (event) {
+  function renderMessage(event) {
     const message = JSON.parse(event.data);
     const messageElement = document.createElement('div');
     messageElement.className = 'bg-light rounded p-2 mb-2';
@@ -24,9 +31,5 @@
       <small class="d-block text-end">at ${message.created_at}</small>
     `;
     container.appendChild(messageElement);
-  };
-
-  form.addEventListener('submit', sendMessage);
-
-  ws.onmessage = renderMessage;
+  }
 })();

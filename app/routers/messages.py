@@ -9,9 +9,9 @@ router = APIRouter()
 manager = ConnectionManager()
 
 
-@router.websocket('/')
-async def messages(websocket: WebSocket):
-    await manager.connect(websocket)
+@router.websocket('/{chat_id}')
+async def messages(websocket: WebSocket, chat_id: str):
+    await manager.connect(chat_id, websocket)
 
     try:
         while True:
@@ -20,6 +20,6 @@ async def messages(websocket: WebSocket):
                 'message': message,
                 'created_at': datetime.now().strftime('%H:%M:%S'),
             }
-            await manager.broadcast(data)
+            await manager.broadcast(chat_id, data)
     except WebSocketDisconnect:
-        manager.disconnect(websocket)
+        manager.disconnect(chat_id, websocket)
