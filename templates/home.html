@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block heading %}Join chat or Create your own{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col col-12 col-md-6 col-lg-4 d-flex flex-column">
+    <form class="d-flex" method="post" action="/chats/connect">
+      <div class="flex-grow-1 me-3">
+        <input
+            type="text"
+            class="form-control"
+            name="chat_id"
+            placeholder="Chat id"
+            autofocus
+            required
+        >
+      </div>
+      <button type="submit" class="btn btn-warning">Connect</button>
+    </form>
+    <hr>
+    <a href="/chats/new" class="btn btn-warning">Create new chat</a>
+  </div>
+</div>
+{% endblock %}
