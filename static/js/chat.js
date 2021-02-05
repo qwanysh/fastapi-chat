@@ -2,7 +2,8 @@
   const form = document.getElementById('form');
   const container = document.getElementById('messages');
 
-  const ws = new WebSocket(`ws://${location.host}/messages/`);
+  const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+  const ws = new WebSocket(`${protocol}://${location.host}/messages/`);
 
   const sendMessage = function (event) {
     event.preventDefault();
